@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-data-provider
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: external-data-provider
+  template:
+    metadata:
+      labels:
+        run: external-data-provider
+    spec:
+      containers:
+      - image: openpolicyagent/external-data-provider:dev
+        imagePullPolicy: IfNotPresent
+        name: external-data-provider
+        args:
+        {{- if and .Values.provider.tls.enabled .Values.certDir }}
+        - --cert-dir={{ .Values.certDir }}
+        {{- end }}
+        {{- if .Values.clientCAFile }}
+        - --client-ca-file={{ .Values.clientCAFile }}
+        {{- end }}
+        - --port={{ .Values.port }}
+        ports:
+        - containerPort: {{ .Values.port }}
+          protocol: TCP
+        {{- if .Values.clientCAFile }}
+        volumeMounts:
+        - name: gatekeeper-ca-cert
+          mountPath: /tmp/gatekeeper
+          readOnly: true
+        {{- end }}
+      restartPolicy: Always
+      nodeSelector:
+        kubernetes.io/os: linux
+      {{- if .Values.clientCAFile }}
+      volumes:
+      - name: gatekeeper-ca-cert
+        secret:
+          secretName: gatekeeper-webhook-server-cert
+          items:
+          - key: ca.crt
+            path: ca.crt
+      {{- end }}

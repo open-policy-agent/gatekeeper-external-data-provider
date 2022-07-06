@@ -1,0 +1,82 @@
+name: build_test
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: "Lint"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Set up Go 1.18
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+
+      # source: https://github.com/golangci/golangci-lint-action
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.46.2
+
+  helm_build_test:
+    name: "[Helm] Build and Test"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Set up Go 1.18
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+
+      - name: Bootstrap e2e
+        env:
+          KIND_VERSION: 0.14.0
+          BATS_VERSION: 1.2.1
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/bin
+          echo "${GITHUB_WORKSPACE}/bin" >> $GITHUB_PATH
+          GOBIN="${GITHUB_WORKSPACE}/bin" go install sigs.k8s.io/kind@v${KIND_VERSION}
+          curl -sSLO https://github.com/bats-core/bats-core/archive/v${BATS_VERSION}.tar.gz && tar -zxvf v${BATS_VERSION}.tar.gz && bash bats-core-${BATS_VERSION}/install.sh ${GITHUB_WORKSPACE}
+
+      - name: Create a kind cluster and install Gatekeeper
+        run: |
+          cd ${HOME}
+          git clone https://github.com/open-policy-agent/gatekeeper
+          cd gatekeeper
+
+          ./third_party/github.com/tilt-dev/kind-local/kind-with-registry.sh
+          # TODO: pin to v3.9.0 once it's available
+          helm install gatekeeper manifest_staging/charts/gatekeeper \
+            --set image.release=dev \
+            --set enableExternalData=true \
+            --namespace gatekeeper-system \
+            --create-namespace
+
+      - name: Build and install external-data-provider
+        run: |
+          ./scripts/generate-tls-cert.sh
+          make docker-buildx kind-load-image
+          helm install external-data-provider charts/external-data-provider \
+            --set provider.tls.caBundle="$(cat certs/ca.crt | base64 | tr -d '\n\r')" \
+            --namespace gatekeeper-system
+
+      - name: Run e2e
+        run: |
+          bats -t test/bats/test.bats

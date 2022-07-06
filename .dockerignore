@@ -1,0 +1,7 @@
+# Ignore unnecessary files
+**/*~
+**/*.log
+**/.DS_Store
+**/Thumbs.db
+
+./.tmp
