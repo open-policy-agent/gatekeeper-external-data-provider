@@ -16,7 +16,7 @@ ENV GO111MODULE=on \
     GOARCH=${TARGETARCH} \
     GOARM=${TARGETVARIANT}
 
-WORKDIR /go/src/github.com/open-policy-agent/external-data-provider
+WORKDIR /go/src/github.com/open-policy-agent/gatekeeper-external-data-provider
 
 COPY . .
 
@@ -26,10 +26,10 @@ FROM ${BASEIMAGE}
 
 WORKDIR /
 
-COPY --from=builder /go/src/github.com/open-policy-agent/external-data-provider/bin/provider .
+COPY --from=builder /go/src/github.com/open-policy-agent/gatekeeper-external-data-provider/bin/provider .
 
-COPY --from=builder --chown=65532:65532 /go/src/github.com/open-policy-agent/external-data-provider/certs/tls.crt \
-    /go/src/github.com/open-policy-agent/external-data-provider/certs/tls.key \
+COPY --from=builder --chown=65532:65532 /go/src/github.com/open-policy-agent/gatekeeper-external-data-provider/certs/tls.crt \
+    /go/src/github.com/open-policy-agent/gatekeeper-external-data-provider/certs/tls.key \
     /certs/
 
 USER 65532:65532

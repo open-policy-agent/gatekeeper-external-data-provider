@@ -2,7 +2,7 @@ apiVersion: v2
 description: A Helm chart for a template external data provider
 name: external-data-provider
 version: 0.0.1
-home: https://github.com/open-policy-agent/external-data-provider
+home: https://github.com/open-policy-agent/gatekeeper-external-data-provider
 sources:
-  - https://github.com/open-policy-agent/external-data-provider.git
+  - https://github.com/open-policy-agent/gatekeeper-external-data-provider.git
 appVersion: 0.0.1

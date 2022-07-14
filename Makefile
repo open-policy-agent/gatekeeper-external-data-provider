@@ -1,4 +1,4 @@
-REPOSITORY ?= openpolicyagent/external-data-provider
+REPOSITORY ?= openpolicyagent/gatekeeper-external-data-provider
 IMG := $(REPOSITORY):dev
 
 # When updating this, make sure to update the corresponding action in

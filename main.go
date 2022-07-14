@@ -12,8 +12,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/open-policy-agent/external-data-provider/pkg/handler"
-	"github.com/open-policy-agent/external-data-provider/pkg/utils"
+	"github.com/open-policy-agent/gatekeeper-external-data-provider/pkg/handler"
+	"github.com/open-policy-agent/gatekeeper-external-data-provider/pkg/utils"
 
 	"k8s.io/klog/v2"
 )

@@ -38,7 +38,7 @@ helm install gatekeeper manifest_staging/charts/gatekeeper \
 4. Build and deploy the external data provider.
 
 ```bash
-git clone https://github.com/open-policy-agent/external-data-provider.git
+git clone https://github.com/open-policy-agent/gatekeeper-external-data-provider.git
 cd external-data-provider
 
 # if you are not planning to establish mTLS between the provider and Gatekeeper,
