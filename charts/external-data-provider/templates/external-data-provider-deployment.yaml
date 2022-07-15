@@ -14,7 +14,7 @@ spec:
         run: external-data-provider
     spec:
       containers:
-      - image: openpolicyagent/external-data-provider:dev
+      - image: openpolicyagent/gatekeeper-external-data-provider:dev
         imagePullPolicy: IfNotPresent
         name: external-data-provider
         args:

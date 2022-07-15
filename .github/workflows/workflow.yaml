@@ -75,7 +75,8 @@ jobs:
           make docker-buildx kind-load-image
           helm install external-data-provider charts/external-data-provider \
             --set provider.tls.caBundle="$(cat certs/ca.crt | base64 | tr -d '\n\r')" \
-            --namespace gatekeeper-system
+            --namespace gatekeeper-system \
+            --wait --debug
 
       - name: Run e2e
         run: |
