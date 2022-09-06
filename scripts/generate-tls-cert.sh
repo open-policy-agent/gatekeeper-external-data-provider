@@ -18,7 +18,7 @@ generate() {
     echo "Generating server key and certificate for external-data-provider..."
     openssl genrsa -out tls.key 2048
     openssl req -newkey rsa:2048 -nodes -keyout tls.key -subj "/CN=external-data-provider.${NAMESPACE}" -out server.csr
-    openssl x509 -req -extfile <(printf "subjectAltName=DNS:external-data-provider.%s" "${NAMESPACE}") -days 1 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out tls.crt
+    openssl x509 -req -extfile <(printf "subjectAltName=DNS:external-data-provider.%s" "${NAMESPACE}") -days 1 -sha256 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out tls.crt
 }
 
 mkdir -p "${REPO_ROOT}/certs"
