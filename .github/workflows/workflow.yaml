@@ -68,7 +68,8 @@ jobs:
             --set enableExternalData=true \
             --name-template=gatekeeper \
             --namespace gatekeeper-system \
-            --create-namespace
+            --create-namespace \
+            --debug
 
       - name: Build and install external-data-provider
         run: |
