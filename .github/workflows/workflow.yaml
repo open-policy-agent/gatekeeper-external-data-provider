@@ -2,9 +2,13 @@ name: build_test
 on:
   workflow_dispatch:
   push:
+    paths-ignore:
+      - "**.md"
     branches:
       - main
   pull_request:
+    paths-ignore:
+      - "**.md"
     branches:
       - main
 
