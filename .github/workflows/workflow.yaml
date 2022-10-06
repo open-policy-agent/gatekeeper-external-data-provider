@@ -16,10 +16,10 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Set up Go 1.18
+      - name: Set up Go 1.19
         uses: actions/setup-go@v3
         with:
-          go-version: 1.18
+          go-version: 1.19
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
@@ -28,7 +28,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.46.2
+          version: v1.50.0
 
   helm_build_test:
     name: "[Helm] Build and Test"
@@ -37,17 +37,17 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Set up Go 1.18
+      - name: Set up Go 1.19
         uses: actions/setup-go@v3
         with:
-          go-version: 1.18
+          go-version: 1.19
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
 
       - name: Bootstrap e2e
         env:
-          KIND_VERSION: 0.14.0
+          KIND_VERSION: 0.16.0
           BATS_VERSION: 1.2.1
         run: |
           mkdir -p $GITHUB_WORKSPACE/bin
@@ -56,18 +56,20 @@ jobs:
           curl -sSLO https://github.com/bats-core/bats-core/archive/v${BATS_VERSION}.tar.gz && tar -zxvf v${BATS_VERSION}.tar.gz && bash bats-core-${BATS_VERSION}/install.sh ${GITHUB_WORKSPACE}
 
       - name: Create a kind cluster and install Gatekeeper
+        env:
+          GATEKEEPER_VERSION: 3.9.0
+          KUBERNETES_VERSION: 1.24.6
         run: |
-          cd ${HOME}
-          git clone https://github.com/open-policy-agent/gatekeeper
-          cd gatekeeper
+          kind create cluster --image kindest/node:v${KUBERNETES_VERSION} --name gatekeeper
 
-          ./third_party/github.com/tilt-dev/kind-local/kind-with-registry.sh
-          # TODO: pin to v3.9.0 once it's available
-          helm install gatekeeper manifest_staging/charts/gatekeeper \
-            --set image.release=dev \
+          helm repo add gatekeeper https://open-policy-agent.github.io/gatekeeper/charts
+          helm install gatekeeper/gatekeeper \
+            --version ${GATEKEEPER_VERSION} \
             --set enableExternalData=true \
+            --name-template=gatekeeper \
             --namespace gatekeeper-system \
-            --create-namespace
+            --create-namespace \
+            --debug
 
       - name: Build and install external-data-provider
         run: |
