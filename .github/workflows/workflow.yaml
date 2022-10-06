@@ -49,8 +49,6 @@ jobs:
         env:
           KIND_VERSION: 0.16.0
           BATS_VERSION: 1.2.1
-          GATEKEEPER_VERSION: 3.9.0
-          KUBERNETES_VERSION: 1.24.6
         run: |
           mkdir -p $GITHUB_WORKSPACE/bin
           echo "${GITHUB_WORKSPACE}/bin" >> $GITHUB_PATH
@@ -58,6 +56,9 @@ jobs:
           curl -sSLO https://github.com/bats-core/bats-core/archive/v${BATS_VERSION}.tar.gz && tar -zxvf v${BATS_VERSION}.tar.gz && bash bats-core-${BATS_VERSION}/install.sh ${GITHUB_WORKSPACE}
 
       - name: Create a kind cluster and install Gatekeeper
+        env:
+          GATEKEEPER_VERSION: 3.9.0
+          KUBERNETES_VERSION: 1.24.6
         run: |
           kind create cluster --image kindest/node:v${KUBERNETES_VERSION} --name gatekeeper
 
