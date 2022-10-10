@@ -45,6 +45,8 @@ spec:
           mountPath: /tmp/gatekeeper
           readOnly: true
         {{- end }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
       restartPolicy: Always
       nodeSelector:
         kubernetes.io/os: linux
