@@ -7,7 +7,6 @@ provider:
     enabled: true
     caBundle: ""
     skipVerify: false
-
 securityContext:
   allowPrivilegeEscalation: false
   capabilities:
@@ -16,3 +15,4 @@ securityContext:
   runAsNonRoot: true
   seccompProfile:
     type: RuntimeDefault
+

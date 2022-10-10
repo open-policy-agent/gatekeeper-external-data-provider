@@ -36,7 +36,6 @@ spec:
         {{- end }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
-
       restartPolicy: Always
       nodeSelector:
         kubernetes.io/os: linux
