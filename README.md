@@ -11,31 +11,23 @@ A template repository for building external data providers for Gatekeeper.
 
 ## Quick Start
 
-1. Clone the Gatekeeper repository.
+1. Create a [kind cluster](https://kind.sigs.k8s.io/docs/user/quick-start/).
+
+2. Install the latest version of Gatekeeper and enable the external data feature.
 
 ```bash
-git clone https://github.com/open-policy-agent/gatekeeper.git
-cd gatekeeper
-```
+# Add the Gatekeeper Helm repository
+helm repo add gatekeeper https://open-policy-agent.github.io/gatekeeper/charts
 
-2. Create a kind cluster.
-
-```bash
-./third_party/github.com/tilt-dev/kind-local/kind-with-registry.sh
-```
-
-3. Install the latest version of Gatekeeper and enable the external data feature.
-
-```bash
-# TODO: pin to v3.9.0 once it's available
-helm install gatekeeper manifest_staging/charts/gatekeeper \
-    --set image.release=dev \
+# Install the latest version of Gatekeeper with the external data feature enabled.
+helm install gatekeeper/gatekeeper \
     --set enableExternalData=true \
+    --name-template=gatekeeper \
     --namespace gatekeeper-system \
     --create-namespace
 ```
 
-4. Build and deploy the external data provider.
+3. Build and deploy the external data provider.
 
 ```bash
 git clone https://github.com/open-policy-agent/gatekeeper-external-data-provider.git
@@ -78,14 +70,14 @@ helm install external-data-provider charts/external-data-provider \
     --create-namespace
 ```
 
-5a. Install constraint template and constraint.
+4a. Install constraint template and constraint.
 
 ```bash
 kubectl apply -f validation/external-data-provider-constraint-template.yaml
 kubectl apply -f validation/external-data-provider-constraint.yaml
 ```
 
-5b. Test the external data provider by dry-running the following command:
+4b. Test the external data provider by dry-running the following command:
 
 ```bash
 kubectl run nginx --image=error_nginx --dry-run=server -ojson
@@ -93,17 +85,17 @@ kubectl run nginx --image=error_nginx --dry-run=server -ojson
 
 Gatekeeper should deny the pod admission above because the image field has an `error_nginx` prefix.
 
-```
+```console
 Error from server (Forbidden): admission webhook "validation.gatekeeper.sh" denied the request: [deny-images-with-invalid-suffix] invalid response: {"errors": [["error_nginx", "error_nginx_invalid"]], "responses": [], "status_code": 200, "system_error": ""}
 ```
 
-6a. Install Assign mutation.
+5a. Install Assign mutation.
 
 ```bash
 kubectl apply -f mutation/external-data-provider-mutation.yaml
 ```
 
-6b. Test the external data provider by dry-running the following command:
+5b. Test the external data provider by dry-running the following command:
 
 ```bash
 kubectl run nginx --image=nginx --dry-run=server -ojson
@@ -121,7 +113,7 @@ The expected JSON output should have the following image field with `_valid` app
 ]
 ```
 
-7. Uninstall the external data provider and Gatekeeper.
+6. Uninstall the external data provider and Gatekeeper.
 
 ```bash
 kubectl delete -f validation/

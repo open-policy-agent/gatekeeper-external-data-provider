@@ -6,7 +6,6 @@ import (
 	"crypto/x509"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -45,8 +44,9 @@ func main() {
 	mux.HandleFunc("/", processTimeout(handler.Handler, timeout))
 
 	server := &http.Server{
-		Addr:    fmt.Sprintf(":%d", port),
-		Handler: mux,
+		Addr:              fmt.Sprintf(":%d", port),
+		Handler:           mux,
+		ReadHeaderTimeout: time.Duration(5) * time.Second,
 	}
 
 	config := &tls.Config{
@@ -54,7 +54,7 @@ func main() {
 	}
 	if clientCAFile != "" {
 		klog.InfoS("loading Gatekeeper's CA certificate", "clientCAFile", clientCAFile)
-		caCert, err := ioutil.ReadFile(clientCAFile)
+		caCert, err := os.ReadFile(clientCAFile)
 		if err != nil {
 			klog.ErrorS(err, "unable to load Gatekeeper's CA certificate", "clientCAFile", clientCAFile)
 			os.Exit(1)

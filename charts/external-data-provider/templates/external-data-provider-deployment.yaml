@@ -17,6 +17,17 @@ spec:
       - image: openpolicyagent/gatekeeper-external-data-provider:dev
         imagePullPolicy: IfNotPresent
         name: external-data-provider
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 65532
+          runAsNonRoot: true
+          runAsUser: 65532
+          seccompProfile:
+            type: RuntimeDefault
         args:
         {{- if and .Values.provider.tls.enabled .Values.certDir }}
         - --cert-dir={{ .Values.certDir }}
