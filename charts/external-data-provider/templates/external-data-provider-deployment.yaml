@@ -29,9 +29,7 @@ spec:
           seccompProfile:
             type: RuntimeDefault
         args:
-        {{- if and .Values.provider.tls.enabled .Values.certDir }}
         - --cert-dir={{ .Values.certDir }}
-        {{- end }}
         {{- if .Values.clientCAFile }}
         - --client-ca-file={{ .Values.clientCAFile }}
         {{- end }}

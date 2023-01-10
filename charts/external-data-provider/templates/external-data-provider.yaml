@@ -1,11 +1,8 @@
-apiVersion: externaldata.gatekeeper.sh/v1alpha1
+apiVersion: externaldata.gatekeeper.sh/v1beta1
 kind: Provider
 metadata:
   name: external-data-provider
 spec:
-  url: {{ if .Values.provider.tls.enabled }}https{{ else }}http{{ end }}://external-data-provider.{{ .Release.Namespace }}:{{ .Values.port }}
+  url: https://external-data-provider.{{ .Release.Namespace }}:{{ .Values.port }}
   timeout: {{ .Values.provider.timeout }}
-  insecureTLSSkipVerify: {{ .Values.provider.tls.skipVerify }}
-  {{- if .Values.provider.tls.enabled }}
-  caBundle: {{ required "You must provider .Values.provider.tls.caBundle when .Values.provider.tls.enabled is true" .Values.provider.tls.caBundle }}
-  {{- end }}
+  caBundle: {{ required "You must provide .Values.provider.tls.caBundle" .Values.provider.tls.caBundle }}

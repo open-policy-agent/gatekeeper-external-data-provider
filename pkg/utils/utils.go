@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	apiVersion = "externaldata.gatekeeper.sh/v1alpha1"
+	apiVersion = "externaldata.gatekeeper.sh/v1beta1"
 	kind       = "ProviderResponse"
 )
 
