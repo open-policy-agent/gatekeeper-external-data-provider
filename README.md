@@ -61,15 +61,6 @@ helm install external-data-provider charts/external-data-provider \
     --namespace "${NAMESPACE:-gatekeeper-system}" \
     --create-namespace
 
-# 3. client and server auth disabled
-helm install external-data-provider charts/external-data-provider \
-    --set clientCAFile="" \
-    --set provider.tls.enabled=false \
-    --set provider.tls.skipVerify=true \
-    --namespace "${NAMESPACE:-gatekeeper-system}" \
-    --create-namespace
-```
-
 4a. Install constraint template and constraint.
 
 ```bash

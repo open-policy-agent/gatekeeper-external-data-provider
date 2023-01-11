@@ -4,6 +4,4 @@ port: 8090
 provider:
   timeout: 1
   tls:
-    enabled: true
     caBundle: ""
-    skipVerify: false

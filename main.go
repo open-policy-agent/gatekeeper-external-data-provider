@@ -78,11 +78,8 @@ func main() {
 			os.Exit(1)
 		}
 	} else {
-		klog.InfoS("starting external data provider server", "port", port)
-		if err := server.ListenAndServe(); err != nil {
-			klog.ErrorS(err, "unable to start external data provider server")
-			os.Exit(1)
-		}
+		klog.Error("TLS certificates are not provided, the server will not be started")
+		os.Exit(1)
 	}
 }
 
