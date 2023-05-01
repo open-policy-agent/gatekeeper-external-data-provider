@@ -20,8 +20,9 @@ updates:
         - "version-update:semver-major"
         - "version-update:semver-minor"
 
-
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: daily
+    commit-message:
+      prefix: "chore"
