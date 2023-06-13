@@ -60,6 +60,7 @@ helm install external-data-provider charts/external-data-provider \
     --set provider.tls.caBundle="$(cat certs/ca.crt | base64 | tr -d '\n\r')" \
     --namespace "${NAMESPACE:-gatekeeper-system}" \
     --create-namespace
+```
 
 4a. Install constraint template and constraint.
 
